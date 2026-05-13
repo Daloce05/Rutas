@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const pool = require('./config/db');
+const initDB = require('./database/init');
 const routes = require('./routes');
 const errorHandler = require('./middlewares/errorHandler');
 
@@ -47,9 +48,16 @@ app.get('/db-test', async (req, res) => {
 // Middleware de manejo de errores (debe ir al final)
 app.use(errorHandler);
 
-// Iniciar servidor
-app.listen(PORT, () => {
-  console.log(`🚚 Servidor corriendo en http://localhost:${PORT}`);
-  console.log(`📄 API disponible en http://localhost:${PORT}/api`);
-  console.log(`🌐 Frontend disponible en http://localhost:${PORT}`);
-});
+// Inicializar BD y luego iniciar servidor
+initDB()
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚚 Servidor corriendo en http://localhost:${PORT}`);
+      console.log(`📄 API disponible en http://localhost:${PORT}/api`);
+      console.log(`🌐 Frontend disponible en http://localhost:${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error('❌ No se pudo inicializar la base de datos. Servidor no iniciado.', err);
+    process.exit(1);
+  });
