@@ -206,15 +206,9 @@ class PDFService {
     const valueWidth = 130;
     const totalGastos = Number(viaje.total_gastos) || 0;
     const anticipo = Number(viaje.anticipo) || 0;
-    const valorFlete = Number(viaje.valor_flete) || 0;
-    const sueldoConductor = Number.isFinite(Number(viaje.sueldo_conductor))
-      ? Number(viaje.sueldo_conductor)
-      : Number.isFinite(Number(viaje.saldo_conductor))
-      ? Number(viaje.saldo_conductor)
-      : (valorFlete - totalGastos);
     const saldoFinal = Number.isFinite(Number(viaje.saldo_final))
       ? Number(viaje.saldo_final)
-      : (sueldoConductor - anticipo);
+      : (anticipo - totalGastos);
 
     doc.fontSize(11).font('Helvetica-Bold');
 
@@ -232,16 +226,6 @@ class PDFService {
     let y = doc.y;
     doc.text('Total Gastos:', startX, y, { width: labelWidth });
     doc.text(this.formatearMoneda(totalGastos), startX + labelWidth, y, {
-      width: valueWidth, 
-      align: 'right' 
-    });
-
-    doc.moveDown(0.5);
-
-    // Sueldo conductor
-    y = doc.y;
-    doc.text('Sueldo Conductor:', startX, y, { width: labelWidth });
-    doc.text(this.formatearMoneda(sueldoConductor), startX + labelWidth, y, {
       width: valueWidth, 
       align: 'right' 
     });

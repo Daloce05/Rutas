@@ -23,9 +23,8 @@ class ViajesService {
         observaciones,
         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) as anticipo,
         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) as total_gastos,
-        (valor_flete - (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as sueldo_conductor,
-        ((valor_flete - (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) -
-         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as saldo_final,
+        ((SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) -
+         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as saldo_final,
         created_at,
         updated_at
       FROM viajes
@@ -52,9 +51,8 @@ class ViajesService {
         observaciones,
         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) as anticipo,
         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) as total_gastos,
-        (valor_flete - (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as sueldo_conductor,
-        ((valor_flete - (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) -
-         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as saldo_final,
+        ((SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) -
+         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as saldo_final,
         created_at,
         updated_at
       FROM viajes
@@ -145,9 +143,8 @@ class ViajesService {
           observaciones,
           (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) as anticipo,
           (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) as total_gastos,
-          (valor_flete - (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as sueldo_conductor,
-          ((valor_flete - (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) -
-           (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as saldo_final,
+          ((SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) -
+           (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as saldo_final,
           created_at,
           updated_at
         FROM viajes
@@ -263,9 +260,8 @@ class ViajesService {
         observaciones,
         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) as anticipo,
         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) as total_gastos,
-        (valor_flete - (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as sueldo_conductor,
-        ((valor_flete - (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) -
-         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as saldo_final
+        ((SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) = 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id) -
+         (SELECT COALESCE(SUM(CASE WHEN LOWER(TRIM(tg.nombre)) != 'anticipo' THEN valor ELSE 0 END), 0) FROM gastos g JOIN tipos_gastos tg ON g.tipo_gasto_id = tg.id WHERE g.viaje_id = viajes.id)) as saldo_final
       FROM viajes
       WHERE id = $1
     `;
