@@ -1,7 +1,7 @@
 // =================================
 // CONFIGURACIÓN Y CONSTANTES
 // =================================
-const API_URL = 'http://localhost:3000/api';
+const API_URL = 'https://rutas-g3bh.onrender.com/api';
 
 let viajeActual = null;
 let tiposGastos = [];
