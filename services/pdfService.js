@@ -72,45 +72,64 @@ class PDFService {
    * Generar información del viaje
    */
   generarInfoViaje(doc, viaje) {
-    const startY = doc.y;
-
     doc.fontSize(14).font('Helvetica-Bold').text('Datos del Viaje', { underline: true });
-    doc.moveDown(0.5);
-
+    doc.moveDown(0.6);
     doc.fontSize(10).font('Helvetica');
 
-    const infoItems = [
-      { label: 'Fecha:', value: this.formatearFecha(viaje.fecha_viaje) },
-      { label: 'Material:', value: viaje.material_transportado },
-      { label: 'Origen:', value: viaje.origen },
-      { label: 'Destino:', value: viaje.destino },
-      { label: 'Kilos:', value: this.formatearNumero(viaje.kilos_transportados) + ' kg' },
-      { label: 'Placa:', value: viaje.placa_vehiculo },
-      { label: 'Valor Flete:', value: this.formatearMoneda(viaje.valor_flete) },
-      { label: 'Anticipo:', value: this.formatearMoneda(viaje.anticipo) }
-    ];
-
+    const leftX = 50;
+    const rightX = 305;
+    const colWidth = 230;
     let y = doc.y;
 
-    infoItems.forEach((item, index) => {
-      if (index % 2 === 0) {
-        y = doc.y;
-        doc.font('Helvetica-Bold').text(item.label, 50, y, { width: 80, continued: true });
-        doc.font('Helvetica').text(item.value, { width: 170 });
-      } else {
-        doc.font('Helvetica-Bold').text(item.label, 300, y, { width: 80, continued: true });
-        doc.font('Helvetica').text(item.value, { width: 170 });
-        doc.moveDown(0.5);
-      }
+    const filas = [
+      [
+        { label: 'Fecha', value: this.formatearFecha(viaje.fecha_viaje) },
+        { label: 'Material', value: viaje.material_transportado }
+      ],
+      [
+        { label: 'Origen', value: viaje.origen },
+        { label: 'Destino', value: viaje.destino }
+      ],
+      [
+        { label: 'Kilos', value: `${this.formatearNumero(viaje.kilos_transportados)} kg` },
+        { label: 'Placa', value: viaje.placa_vehiculo }
+      ],
+      [
+        { label: 'Valor Flete', value: this.formatearMoneda(viaje.valor_flete) },
+        { label: 'Anticipo', value: this.formatearMoneda(viaje.anticipo) }
+      ]
+    ];
+
+    filas.forEach(([izquierda, derecha]) => {
+      const altoIzq = this.dibujarCampoInfo(doc, izquierda.label, izquierda.value, leftX, y, colWidth);
+      const altoDer = this.dibujarCampoInfo(doc, derecha.label, derecha.value, rightX, y, colWidth);
+      y += Math.max(altoIzq, altoDer) + 8;
     });
 
+    doc.y = y;
+
     if (viaje.observaciones) {
-      doc.moveDown(0.5);
-      doc.font('Helvetica-Bold').text('Observaciones:', { continued: true });
-      doc.font('Helvetica').text(' ' + viaje.observaciones);
+      doc.moveDown(0.3);
+      doc.font('Helvetica-Bold').text('Observaciones:');
+      doc.font('Helvetica').text(String(viaje.observaciones));
     }
 
     doc.moveDown(1.5);
+  }
+
+  /**
+   * Dibujar un campo etiqueta/valor con alto dinámico para evitar solapes
+   */
+  dibujarCampoInfo(doc, label, value, x, y, width) {
+    const labelWidth = 88;
+    const valor = this.textoSeguro(value);
+
+    doc.font('Helvetica-Bold').text(`${label}:`, x, y, { width: labelWidth });
+    doc.font('Helvetica').text(valor, x + labelWidth, y, { width: width - labelWidth });
+
+    const labelHeight = doc.heightOfString(`${label}:`, { width: labelWidth });
+    const valueHeight = doc.heightOfString(valor, { width: width - labelWidth });
+    return Math.max(labelHeight, valueHeight);
   }
 
   /**
@@ -185,6 +204,12 @@ class PDFService {
     const startX = 350;
     const labelWidth = 120;
     const valueWidth = 130;
+    const sueldoConductor = Number.isFinite(Number(viaje.saldo_conductor))
+      ? Number(viaje.saldo_conductor)
+      : Number(viaje.saldo_final) || 0;
+    const totalGastos = Number(viaje.total_gastos) || 0;
+    const anticipo = Number(viaje.anticipo) || 0;
+    const saldoFinal = Number(viaje.saldo_final) || 0;
 
     doc.fontSize(11).font('Helvetica-Bold');
 
@@ -201,17 +226,17 @@ class PDFService {
     // Total gastos
     let y = doc.y;
     doc.text('Total Gastos:', startX, y, { width: labelWidth });
-    doc.text(this.formatearMoneda(viaje.total_gastos), startX + labelWidth, y, { 
+    doc.text(this.formatearMoneda(totalGastos), startX + labelWidth, y, {
       width: valueWidth, 
       align: 'right' 
     });
 
     doc.moveDown(0.5);
 
-    // Saldo conductor
+    // Sueldo conductor
     y = doc.y;
-    doc.text('Saldo Conductor:', startX, y, { width: labelWidth });
-    doc.text(this.formatearMoneda(viaje.saldo_conductor), startX + labelWidth, y, { 
+    doc.text('Sueldo Conductor:', startX, y, { width: labelWidth });
+    doc.text(this.formatearMoneda(sueldoConductor), startX + labelWidth, y, {
       width: valueWidth, 
       align: 'right' 
     });
@@ -221,7 +246,7 @@ class PDFService {
     // Anticipo
     y = doc.y;
     doc.text('Anticipo:', startX, y, { width: labelWidth });
-    doc.text(this.formatearMoneda(viaje.anticipo), startX + labelWidth, y, { 
+    doc.text(this.formatearMoneda(anticipo), startX + labelWidth, y, {
       width: valueWidth, 
       align: 'right' 
     });
@@ -243,9 +268,9 @@ class PDFService {
     y = doc.y;
     doc.text('Saldo Final:', startX, y, { width: labelWidth });
     
-    const saldoColor = viaje.saldo_final >= 0 ? '#008000' : '#ff0000';
+    const saldoColor = saldoFinal >= 0 ? '#008000' : '#ff0000';
     doc.fillColor(saldoColor).text(
-      this.formatearMoneda(viaje.saldo_final), 
+      this.formatearMoneda(saldoFinal),
       startX + labelWidth, 
       y, 
       { width: valueWidth, align: 'right' }
@@ -300,7 +325,12 @@ class PDFService {
    * Formatear número
    */
   formatearNumero(numero) {
-    return parseFloat(numero).toLocaleString('es-CO', { 
+    const valor = Number(numero);
+    if (!Number.isFinite(valor)) {
+      return '0,00';
+    }
+
+    return valor.toLocaleString('es-CO', {
       minimumFractionDigits: 2,
       maximumFractionDigits: 2
     });
@@ -310,10 +340,25 @@ class PDFService {
    * Formatear moneda
    */
   formatearMoneda(valor) {
-    return '$' + parseFloat(valor).toLocaleString('es-CO', { 
+    const monto = Number(valor);
+    if (!Number.isFinite(monto)) {
+      return '$0';
+    }
+
+    return '$' + monto.toLocaleString('es-CO', {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0
     });
+  }
+
+  /**
+   * Convertir valores vacíos a texto seguro para PDF
+   */
+  textoSeguro(valor) {
+    if (valor === undefined || valor === null || valor === '') {
+      return '-';
+    }
+    return String(valor);
   }
 }
 
