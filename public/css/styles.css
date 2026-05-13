@@ -516,7 +516,7 @@ tbody tr:last-child td {
     font-family: inherit;
     transition: all 0.3s ease;
     background-color: #fafbfc;
-}\n
+}
 .form-group input:focus,
 .form-group select:focus,
 .form-group textarea:focus {
@@ -566,7 +566,7 @@ tbody tr:last-child td {
     padding: 20px;
     margin-bottom: 20px;
     transition: all 0.3s ease;
-}\n
+}
 .gastos-iniciales:hover {
     border-color: var(--primary-color);
     box-shadow: 0 4px 12px rgba(99, 102, 241, 0.1);
@@ -851,49 +851,347 @@ tbody tr:last-child td {
 /* =================================
    RESPONSIVE
    ================================= */
-@media (max-width: 768px) {
+
+/* --- Tablet grande: 1024px --- */
+@media (max-width: 1024px) {
+    .container {
+        padding: 16px;
+    }
+
+    header {
+        padding: 36px 20px;
+    }
+
     header h1 {
-        font-size: 2rem;
+        font-size: 2.2rem;
+    }
+
+    .logout-btn {
+        top: 18px;
+        right: 18px;
+        width: 42px;
+        height: 42px;
+    }
+
+    .modal-large {
+        max-width: 95%;
+    }
+}
+
+/* --- Tablet: 768px --- */
+@media (max-width: 768px) {
+    /* Layout */
+    .container {
+        padding: 12px;
+    }
+
+    /* Header */
+    header {
+        padding: 28px 52px 28px 20px; /* espacio derecho para el botón logout */
+        margin-bottom: 24px;
+        border-radius: 14px;
+        text-align: left;
+    }
+
+    header h1 {
+        font-size: 1.5rem;
+        letter-spacing: -0.3px;
+        margin-bottom: 4px;
     }
 
     header p {
-        font-size: 1rem;
+        font-size: 0.9rem;
+        opacity: 0.85;
     }
 
-    .form-row {
-        grid-template-columns: 1fr;
+    /* Logout */
+    .logout-btn {
+        top: 14px;
+        right: 14px;
+        width: 38px;
+        height: 38px;
     }
 
-    .form-inline {
-        flex-direction: column;
-        align-items: stretch;
+    .logout-icon {
+        font-size: 1.3rem;
     }
 
-    .modal-content {
-        width: 95%;
-        margin: 10% auto;
-        border-radius: 12px;
-    }
-
-    table {
-        font-size: 0.85rem;
-    }
-
-    th, td {
-        padding: 8px;
-    }
-
-    .gasto-inicial-row {
-        grid-template-columns: 1fr;
-        gap: 10px;
-    }
-
+    /* Tabs */
     .tabs {
+        gap: 0;
         overflow-x: auto;
         -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 0;
+        margin-bottom: 20px;
+    }
+
+    .tabs::-webkit-scrollbar {
+        display: none;
     }
 
     .tab-btn {
         white-space: nowrap;
+        padding: 10px 18px;
+        font-size: 0.95rem;
+        flex-shrink: 0;
+    }
+
+    /* Section header */
+    .section-header {
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 16px;
+    }
+
+    .section-header h2 {
+        font-size: 1.1rem;
+    }
+
+    /* Filters */
+    .filters input {
+        max-width: 100%;
+    }
+
+    /* Table: scroll horizontal en lugar de reducir contenido */
+    .table-container {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        border-radius: 10px;
+    }
+
+    table {
+        font-size: 0.82rem;
+        min-width: 540px; /* fuerza scroll antes de colapsar */
+    }
+
+    th {
+        padding: 12px 10px;
+        font-size: 0.75rem;
+    }
+
+    td {
+        padding: 10px 10px;
+        white-space: nowrap;
+    }
+
+    /* No escalar filas en hover en mobile (causa salto) */
+    tbody tr:hover {
+        transform: none;
+    }
+
+    /* Botones de acción en tabla */
+    .btn-sm {
+        padding: 5px 9px;
+        font-size: 0.78rem;
+    }
+
+    .btn-icon {
+        padding: 5px 8px;
+        font-size: 0.82rem;
+    }
+
+    /* Modales */
+    .modal-content,
+    .modal-large,
+    .modal-small {
+        width: 96%;
+        max-width: 96%;
+        margin: 6% auto;
+        border-radius: 12px;
+    }
+
+    .modal-header {
+        padding: 16px 18px;
+    }
+
+    .modal-header h3 {
+        font-size: 1.1rem;
+    }
+
+    .modal-body {
+        padding: 16px;
+    }
+
+    /* Formularios */
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .form-group {
+        margin-bottom: 14px;
+    }
+
+    .form-group label {
+        font-size: 0.88rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        padding: 10px 12px;
+        font-size: 0.9rem;
+    }
+
+    /* Formulario inline de gastos */
+    .form-inline {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+        padding: 12px;
+    }
+
+    .form-inline .form-group {
+        margin-bottom: 0;
+    }
+
+    .form-actions {
+        flex-direction: row;
+        justify-content: flex-end;
+    }
+
+    /* Fila de gasto inicial */
+    .gasto-inicial-row {
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+    }
+
+    /* Totales */
+    .totales-card {
+        padding: 16px;
+        border-radius: 12px;
+    }
+
+    .total-row {
+        font-size: 0.95rem;
+    }
+
+    .total-row.highlight {
+        font-size: 1.1rem;
+        margin-left: -12px;
+        margin-right: -12px;
+    }
+
+    /* Info card */
+    .info-card {
+        padding: 14px;
+        font-size: 0.9rem;
+    }
+
+    /* Modal footer */
+    .modal-footer {
+        flex-direction: row;
+        justify-content: flex-end;
+        gap: 8px;
+        margin-top: 16px;
+    }
+}
+
+/* --- Móvil pequeño: 480px --- */
+@media (max-width: 480px) {
+    .container {
+        padding: 8px;
+    }
+
+    header {
+        padding: 20px 50px 20px 14px;
+        border-radius: 10px;
+        margin-bottom: 16px;
+    }
+
+    header h1 {
+        font-size: 1.2rem;
+    }
+
+    header p {
+        font-size: 0.8rem;
+    }
+
+    .logout-btn {
+        top: 10px;
+        right: 10px;
+        width: 34px;
+        height: 34px;
+    }
+
+    .logout-icon {
+        font-size: 1.1rem;
+    }
+
+    .tab-btn {
+        padding: 8px 14px;
+        font-size: 0.88rem;
+    }
+
+    /* Tablas: scroll siempre activo */
+    table {
+        min-width: 480px;
+        font-size: 0.78rem;
+    }
+
+    th {
+        padding: 10px 8px;
+        font-size: 0.7rem;
+    }
+
+    td {
+        padding: 8px 8px;
+    }
+
+    /* Gasto inicial: una sola columna */
+    .gasto-inicial-row {
+        grid-template-columns: 1fr;
+    }
+
+    /* Botones más compactos */
+    .btn {
+        padding: 8px 14px;
+        font-size: 0.88rem;
+    }
+
+    .btn-sm {
+        padding: 4px 8px;
+        font-size: 0.76rem;
+    }
+
+    .section-header h2 {
+        font-size: 1rem;
+    }
+
+    .modal-content,
+    .modal-large,
+    .modal-small {
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        border-radius: 14px 14px 0 0;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+    }
+
+    .modal {
+        align-items: flex-end;
+        display: flex;
+    }
+
+    .modal-body {
+        max-height: 75vh;
+        overflow-y: auto;
+    }
+
+    .totales-card {
+        border-radius: 10px;
+        padding: 14px;
+    }
+
+    .total-row.highlight {
+        font-size: 1rem;
+    }
+
+    /* Login */
+    .login-card {
+        padding: 24px 18px;
     }
 }
