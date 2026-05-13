@@ -146,7 +146,7 @@ function mostrarViajes(viajes) {
     const tbody = document.getElementById('viajesBody');
     
     if (viajes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="8" class="loading">No hay viajes registrados</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="9" class="loading">No hay viajes registrados</td></tr>';
         return;
     }
     
@@ -157,6 +157,7 @@ function mostrarViajes(viajes) {
             <td>${viaje.origen} → ${viaje.destino}</td>
             <td>${viaje.placa_vehiculo}</td>
             <td>${formatearMoneda(viaje.valor_flete)}</td>
+            <td>${formatearMoneda(viaje.anticipo)}</td>
             <td>${formatearMoneda(viaje.total_gastos)}</td>
             <td class="${viaje.saldo_final >= 0 ? 'text-success' : 'text-danger'}">
                 ${formatearMoneda(viaje.saldo_final)}
