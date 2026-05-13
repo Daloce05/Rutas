@@ -204,12 +204,17 @@ class PDFService {
     const startX = 350;
     const labelWidth = 120;
     const valueWidth = 130;
-    const sueldoConductor = Number.isFinite(Number(viaje.saldo_conductor))
-      ? Number(viaje.saldo_conductor)
-      : Number(viaje.saldo_final) || 0;
     const totalGastos = Number(viaje.total_gastos) || 0;
     const anticipo = Number(viaje.anticipo) || 0;
-    const saldoFinal = Number(viaje.saldo_final) || 0;
+    const valorFlete = Number(viaje.valor_flete) || 0;
+    const sueldoConductor = Number.isFinite(Number(viaje.sueldo_conductor))
+      ? Number(viaje.sueldo_conductor)
+      : Number.isFinite(Number(viaje.saldo_conductor))
+      ? Number(viaje.saldo_conductor)
+      : (valorFlete - totalGastos);
+    const saldoFinal = Number.isFinite(Number(viaje.saldo_final))
+      ? Number(viaje.saldo_final)
+      : (sueldoConductor - anticipo);
 
     doc.fontSize(11).font('Helvetica-Bold');
 
