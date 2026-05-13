@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Gestión de Viajes de Carga</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="loginSection" class="login-container">
+        <div class="login-card">
+            <div class="login-logo">🚚</div>
+            <h2>Acceso al sistema</h2>
+            <p class="login-subtitle">Ingresa con usuario y contraseña</p>
+            <form id="loginForm" class="login-form">
+                <label for="loginUser">Usuario</label>
+                <input type="text" id="loginUser" placeholder="admin" required>
+
+                <label for="loginPassword">Contraseña</label>
+                <input type="password" id="loginPassword" placeholder="admin" required>
+
+                <button type="submit" class="btn btn-primary btn-block">Ingresar</button>
+                <p class="login-hint">Usuario: admin · Contraseña: admin</p>
+                <div id="loginError" class="login-error" style="display: none;">Credenciales inválidas</div>
+            </form>
+        </div>
+    </div>
+
+    <div id="appContent" class="container" style="display: none;">
+        <header>
+            <h1>🚚 Sistema de Gestión de Viajes de Carga</h1>
+            <p>Gestión completa de viajes y liquidación de gastos</p>
+            <button id="logoutBtn" class="logout-btn" title="Cerrar sesión">
+                <span class="logout-icon">⎋</span>
+            </button>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab-btn active" data-tab="viajes">Viajes</button>
+            <button class="tab-btn" data-tab="tipos-gastos">Tipos de Gastos</button>
+        </nav>
+
+        <!-- TAB: VIAJES -->
+        <div id="viajes" class="tab-content active">
+            <div class="section-header">
+                <h2>Gestión de Viajes</h2>
+                <button class="btn btn-primary" onclick="abrirModalViaje()">+ Nuevo Viaje</button>
+            </div>
+
+            <div class="filters">
+                <input type="text" id="searchViajes" placeholder="Buscar viajes..." onkeyup="filtrarViajes()">
+            </div>
+
+            <div class="table-container">
+                <table id="tablaViajes">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Material</th>
+                            <th>Ruta</th>
+                            <th>Placa</th>
+                            <th>Flete</th>
+                            <th>Gastos</th>
+                            <th>Saldo Final</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="viajesBody">
+                        <tr>
+                            <td colspan="8" class="loading">Cargando viajes...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <!-- TAB: TIPOS DE GASTOS -->
+        <div id="tipos-gastos" class="tab-content">
+            <div class="section-header">
+                <h2>Tipos de Gastos</h2>
+                <button class="btn btn-primary" onclick="abrirModalTipoGasto()">+ Nuevo Tipo</button>
+            </div>
+
+            <div class="table-container">
+                <table id="tablaTiposGastos">
+                    <thead>
+                        <tr>
+                            <th>Nombre</th>
+                            <th>Descripción</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tiposGastosBody">
+                        <tr>
+                            <td colspan="4" class="loading">Cargando tipos de gastos...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: VIAJE -->
+    <div id="modalViaje" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalViajeTitle">Nuevo Viaje</h3>
+                <span class="close" onclick="cerrarModalViaje()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formViaje">
+                    <input type="hidden" id="viajeId">
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="fecha_viaje">Fecha del Viaje *</label>
+                            <input type="date" id="fecha_viaje" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="placa_vehiculo">Placa del Vehículo *</label>
+                            <input type="text" id="placa_vehiculo" required placeholder="ABC123">
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="material_transportado">Material Transportado *</label>
+                        <input type="text" id="material_transportado" required placeholder="Ej: Cemento, Arena, etc.">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="origen">Origen *</label>
+                            <input type="text" id="origen" required placeholder="Ciudad origen">
+                        </div>
+                        <div class="form-group">
+                            <label for="destino">Destino *</label>
+                            <input type="text" id="destino" required placeholder="Ciudad destino">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="kilos_transportados">Kilos Transportados *</label>
+                            <input type="number" id="kilos_transportados" step="0.01" required placeholder="0.00">
+                        </div>
+                        <div class="form-group">
+                            <label for="valor_flete">Valor del Flete *</label>
+                            <input type="number" id="valor_flete" step="1" required placeholder="0">
+                        </div>
+                    </div>
+
+
+
+                    <div class="form-group">
+                        <label for="observaciones">Observaciones</label>
+                        <textarea id="observaciones" rows="3" placeholder="Comentarios adicionales..."></textarea>
+                    </div>
+
+                    <div class="gastos-iniciales">
+                        <div class="section-subheader">
+                            <h4>Gastos e Ingresos</h4>
+                            <button type="button" class="btn btn-sm btn-primary" onclick="agregarGastoInicialFila()">+ Agregar línea</button>
+                        </div>
+                        <p class="help-text">Anticipo (positivo) y gastos (negativos): peajes, ACPM, cargue, saldo del conductor, etc.</p>
+                        <div id="gastosInicialesContainer" class="gastos-iniciales-lista">
+                        </div>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="cerrarModalViaje()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: GASTOS DE VIAJE -->
+    <div id="modalGastos" class="modal">
+        <div class="modal-content modal-large">
+            <div class="modal-header">
+                <h3 id="modalGastosTitle">Gastos del Viaje</h3>
+                <span class="close" onclick="cerrarModalGastos()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="infoViaje" class="info-card"></div>
+
+                <div class="section-header">
+                    <h4>Gastos Registrados</h4>
+                    <button class="btn btn-sm btn-primary" onclick="abrirFormGasto()">+ Agregar Gasto</button>
+                </div>
+
+                <div id="formGastoContainer" style="display: none;">
+                    <form id="formGasto" class="form-inline">
+                        <input type="hidden" id="gastoId">
+                        <input type="hidden" id="gastoViajeId">
+                        
+                        <div class="form-group">
+                            <label for="tipo_gasto_id">Tipo</label>
+                            <select id="tipo_gasto_id" required>
+                                <option value="">Seleccione...</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="valor_gasto">Valor</label>
+                            <input type="number" id="valor_gasto" step="1" required placeholder="0">
+                        </div>
+
+                        <div class="form-group flex-grow">
+                            <label for="descripcion_gasto">Descripción</label>
+                            <input type="text" id="descripcion_gasto" placeholder="Detalles del gasto">
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-sm btn-success">Guardar</button>
+                            <button type="button" class="btn btn-sm btn-secondary" onclick="cancelarFormGasto()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <table class="table-gastos">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Descripción</th>
+                            <th>Valor</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="gastosBody">
+                    </tbody>
+                </table>
+
+                <div class="totales-card">
+                    <div class="total-row">
+                        <span>Total Gastos:</span>
+                        <span id="totalGastos">$0</span>
+                    </div>
+                    <div class="total-row highlight">
+                        <span>Saldo Final (Liquidación):</span>
+                        <span id="saldoFinal">$0</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: TIPO DE GASTO -->
+    <div id="modalTipoGasto" class="modal">
+        <div class="modal-content modal-small">
+            <div class="modal-header">
+                <h3 id="modalTipoGastoTitle">Nuevo Tipo de Gasto</h3>
+                <span class="close" onclick="cerrarModalTipoGasto()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="formTipoGasto">
+                    <input type="hidden" id="tipoGastoId">
+                    
+                    <div class="form-group">
+                        <label for="nombre_tipo">Nombre *</label>
+                        <input type="text" id="nombre_tipo" required placeholder="Ej: Combustible">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="descripcion_tipo">Descripción</label>
+                        <textarea id="descripcion_tipo" rows="3" placeholder="Descripción del tipo de gasto"></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>
+                            <input type="checkbox" id="activo_tipo" checked>
+                            Activo
+                        </label>
+                    </div>
+
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" onclick="cerrarModalTipoGasto()">Cancelar</button>
+                        <button type="submit" class="btn btn-primary">Guardar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: PLACEHOLDER PARA FUTUROS LOGIN MODALS -->
+
+    <script src="js/app.js"></script>
+</body>
+</html>
